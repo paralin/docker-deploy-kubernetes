@@ -4,7 +4,11 @@ import os
 import time
 import sys
 import log
-# import kubernetes
+import operator
+
+from pykube.config import KubeConfig
+from pykube.http import HTTPClient
+from pykube.objects import Pod
 
 def env(key, default=None):
   try:
@@ -28,4 +32,8 @@ def wait(action, desciption=None, step=2000, timeout=300000):
   if (time.time() - start_time)*1000 >= timeout:
     raise RuntimeError(log.err(str(desciption) + ' Timeout (' + str(timeout) + 'ms)', 'timeout'))
 
-# todo: do the thing
+# Check the kubeconfig
+# Check connectivity (verify the namespace exists)
+# Generate a planned layout (services, pods) and verify with user changes
+# Apply changes
+# Completed

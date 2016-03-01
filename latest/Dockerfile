@@ -11,13 +11,11 @@ RUN packages=' \
     openssl-dev \
   ' \
   set -x \
-  && apk --update add $packages \
-  && pip install ndg-httpsclient \
-# install python-kubernetes (to be developed)
-  && apk del g++ py-pip python-dev libffi-dev openssl-dev \
-  && apk add python \
+  && apk --update add $packages python
+RUN pip install ndg-httpsclient pykube
+RUN apk del g++ py-pip python-dev libffi-dev openssl-dev \
   && rm -rf /var/cache/apk/*
 
-COPY deploy-kubernetes.sh setup.py log.py ./
+ADD deploy-kubernetes.sh setup.py log.py ./
 
 ENTRYPOINT ["/azk/deploy/deploy.sh", "--provider", "kubernetes"]
