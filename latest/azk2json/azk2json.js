@@ -31,8 +31,12 @@ function processSystem(sid, sys) {
   }
 
   // Not required: shell
-  if (validate.isString(sys["shell"]) || validate.isArray(sys["shell"])) {
+  if (validate.isArray(sys["shell"])) {
     fsys["cmd"] = sys["shell"];
+  }
+
+  if (validate.isString(sys["shell"])) {
+    fsys["cmd"] = sys["shell"].split(' ');
   }
 
   // Not required: scalable
