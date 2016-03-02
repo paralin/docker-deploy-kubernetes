@@ -42,8 +42,15 @@ function processSystem(sid, sys) {
   }
 
   // Not required: envs
+  var tenvs = fsys["env"] = [];
   if (validate.isObject(sys["envs"])) {
-    fsys["env"] = sys["envs"];
+    var envs = sys["envs"];
+    for (var key in envs) {
+      tenvs.push({
+        "name": key,
+        "value": envs[key]
+      });
+    }
   }
 
   // Not required: ports
