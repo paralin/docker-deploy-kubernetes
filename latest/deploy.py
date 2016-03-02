@@ -51,7 +51,7 @@ Commands:
                 )
         parser.add_argument('command', help='Subcommand to run')
         args = parser.parse_args(sys.argv[3:])
-        coloredlogs.install(level=('DEBUG'), fmt='%(message)s')
+        coloredlogs.install(level=('DEBUG'), fmt='%(message)s', isatty=True)
         if not hasattr(self, args.command):
             parser.print_help()
             exit(1)
@@ -75,11 +75,12 @@ Commands:
                 logger.fatal("Context '" + str(self.context) + "' is not found in kubeconfig.")
                 exit(1)
 
+            self.kubeconfig.set_current_context(self.context)
             logger.debug("Testing connectivity...")
+            if self.namespace is None and "namespace" in self.kubeconfig.contexts[self.context]:
+                self.namespace = self.kubeconfig.contexts[self.context]["namespace"]
             if self.namespace is None:
-                self.namespace = self.kubeconfig.contexts[self.kubeconfig.current_context]["namespace"]
-            if self.namespace is None:
-                logger.fatal("KUBE_NAMESPACE is not set and there is no namespace set in kubeconfig context " + str(self.current_context) + ".")
+                logger.fatal("KUBE_NAMESPACE is not set and there is no namespace set in kubeconfig context " + str(self.kubeconfig.current_context) + ".")
                 exit(1)
             pods = Pod.objects(self.api).filter(namespace=self.namespace)
             logger.info("Currently " + str(len(pods)) + " pods in '" + self.namespace + "' namespace, kubernetes connection appears to be working.")
