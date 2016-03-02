@@ -30,14 +30,27 @@ def env(key, default=None):
   except:
     return default
 
-# An instance of an Azk system in Kubernetes format
-# Includes services, replication controllers, pods, etc...
-class AzkKubeSystem():
+# An action applied against the kube API
+class KubeAction():
     pass
 
 # An instance of Azkfile.js translated to Kubernetes
 class AzkSetup():
-    pass
+    def __init__(self):
+        self.services = []
+        self.replication_controllers = []
+
+    # Load existing resources from a cluster namespace
+    def load_from_kube(self, kube):
+        pass
+
+    # Parse an ask2json output into kubernetes resources
+    def load_from_azk2json(self, data):
+        pass
+
+    # Calculate a list of actions required to get to target state
+    def calculate_actuate(self, target_state):
+        pass
 
 class KubernetesDeployer():
     def __init__(self):
@@ -87,7 +100,7 @@ Commands:
             pods = Pod.objects(self.api).filter(namespace=self.namespace)
             logger.info("Currently " + str(len(pods)) + " pods in '" + self.namespace + "' namespace, kubernetes connection appears to be working.")
         except Exception as e:
-            logger.fatal("Unable to load kubeconfig/connection failed, " + e.strerror)
+            logger.fatal("Unable to load kubeconfig/connection failed, " + str(e.strerror))
             exit(1)
 
     def loadsource(self):
@@ -108,6 +121,7 @@ Commands:
         here_dir = os.path.dirname(os.path.abspath(__file__))
         azkjs_p = here_dir + "/azk2json/azk2json.js"
         logger.debug("Evaluating Azkfile.js...")
+        data = None
         try:
             outp = subprocess.check_output(["node", azkjs_p, self.azkfile_path]).decode()
             data = json.loads(outp)
@@ -116,20 +130,27 @@ Commands:
             logger.fatal(ex)
             exit(1)
 
-        logger.debug("Evaluated azkfile: " + json.dumps(outp))
+        logger.debug("Evaluated azkfile, found services: " + ", ".join(list(data.keys())))
+        self.target_setup = AzkSetup()
+        self.target_setup.load_from_azk2json(data)
 
     def full(self):
-        # check the source
+        # chekk the source
         self.loadsource()
 
-        logger.info("Beginning full deploy...")
+        logger.info("Beginning full deploy/sync...")
 
         # check the configs
         self.loadconfig()
 
         # Everything was good with the configs, let's figure out the current state.
         azks = AzkSetup()
+        azks.load_from_kube(self.api)
 
+        # We know the current state, calculate options to actuate target state
+        actions = self.target_setup.calculate_actuate(azks)
+
+        # Format and print the steps and ask for confirmation
 
     def fast(self):
         return self.full()
