@@ -41,7 +41,7 @@ class KubernetesDeployer():
     def __init__(self):
         parser = argparse.ArgumentParser(
                 description="Deploys to kubernetes with azk.io",
-                usage='''deploy <command> [<args>]
+                usage='''deploy -c <command> [<args>]
 
 Commands:
     full/fast   Creates/updates kubernetes resources.
@@ -50,7 +50,7 @@ Commands:
                 '''
                 )
         parser.add_argument('command', help='Subcommand to run')
-        args = parser.parse_args(sys.argv[1:])
+        args = parser.parse_args(sys.argv[3:])
         coloredlogs.install(level=('DEBUG'), fmt='%(message)s')
         if not hasattr(self, args.command):
             parser.print_help()
