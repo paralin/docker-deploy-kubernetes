@@ -6,3 +6,6 @@ build:
 
 no-cache:
 	adocker build --rm --no-cache -t paralin/deploy-kubernetes latest
+
+push:
+	adocker push paralin/deploy-kubernetes:latest

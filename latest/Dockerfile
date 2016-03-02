@@ -1,21 +1,12 @@
-FROM azukiapp/deploy:0.0.3
+FROM phusion/baseimage:0.9.18
 MAINTAINER Christian Stewart (paralin) <christian@paral.in>
 
 WORKDIR /azk/deploy
 
-RUN packages=' \
-    g++ \
-    py-pip \
-    python-dev \
-    libffi-dev \
-    openssl-dev \
-  ' \
-  set -x \
-  && apk --update add $packages python
-RUN pip install ndg-httpsclient pykube
-RUN apk del g++ py-pip python-dev libffi-dev openssl-dev \
-  && rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y build-essential python3-pip libssl-dev libffi-dev
+RUN pip3 install --upgrade ndg-httpsclient pykube arghandler colorlog
+RUN apt-get clean
 
-ADD deploy-kubernetes.sh setup.py log.py ./
+ADD deploy.py kube_http.py ./
 
-ENTRYPOINT ["/azk/deploy/deploy.sh", "--provider", "kubernetes"]
+ENTRYPOINT ["/azk/deploy/deploy.py"]

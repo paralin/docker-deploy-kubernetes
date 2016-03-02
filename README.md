@@ -25,17 +25,12 @@ The following environment variables are available for configuring the deployment
 
 - **KUBE_NAMESPACE** (*optional, default: active context namespace*): Namespace to deploy into.
 - **LOCAL_PROJECT_PATH** (*optional, default: /azk/deploy/src*): Project source code path;
-- **LOCAL_KUBECONFIG_PATH**(*optional, default: /azk/deploy/.kube/config*): Path to kubeconfig. If no path is given, a local Vagrant kubernetes setup is expected.
+- **LOCAL_KUBECONFIG_PATH**(*optional, default: /azk/deploy/.kube/config*): Path to kubeconfig.
 - **KUBE_CONTEXT** (*optional, default: default*): Kube context to use from the kubeconfig file. Uses the active context on default.
-- **GIT_REF** (*optional, default: master*): Git reference (branch, commit SHA1 or tag) to be deployed;
-- **RUN_SETUP** (*optional, default: true*): Boolean variable that defines if the remote server setup step should be run;
-- **RUN_CONFIGURE** (*optional, default: true*): Boolean variable that defines if the remote server configuration should be run;
-- **RUN_DEPLOY** (*optional, default: true*): Boolean variable that defines if the deploy step should be run;
-- **DISABLE_ANALYTICS_TRACKER** (*optional, default: false*): Boolean variable that defines either azk should track deploy anonymous data or not;
 
 #### Usage
 
-Consider you want to deploy your app into a remote Kubernetes cluster and your local kubeconfig is placed at `LOCAL_KUBECONFIG_PATH` (usually this path is `$HOME`/.kube/config).
+Consider you want to deploy your app into a remote Kubernetes cluster and your local kubeconfig is placed at `$HOME/.kube/config` (the default).
 
 #### Usage with `azk`
 
