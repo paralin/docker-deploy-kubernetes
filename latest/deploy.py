@@ -5,6 +5,8 @@ import os
 import time
 import sys
 import operator
+import subprocess
+import json
 
 import logging
 import coloredlogs
@@ -41,7 +43,7 @@ class KubernetesDeployer():
     def __init__(self):
         parser = argparse.ArgumentParser(
                 description="Deploys to kubernetes with azk.io",
-                usage='''deploy -c <command> [<args>]
+                usage='''deploy <command> [<args>]
 
 Commands:
     full/fast   Creates/updates kubernetes resources.
@@ -50,7 +52,7 @@ Commands:
                 '''
                 )
         parser.add_argument('command', help='Subcommand to run')
-        args = parser.parse_args(sys.argv[3:])
+        args = parser.parse_args(sys.argv[1:])
         coloredlogs.install(level=('DEBUG'), fmt='%(message)s', isatty=True)
         if not hasattr(self, args.command):
             parser.print_help()
@@ -94,7 +96,27 @@ Commands:
             logger.fatal("Path '" + proj_path + "' does not exist. Check ${LOCAL_PROJECT_PATH}.")
             logger.fatal("Check the 'mounts' setting of the deploy system in your Azkfile.js.")
             exit(1)
+        self.root_path = proj_path
+        self.azkfile_path = proj_path + "Azkfile.js"
 
+        if not os.path.exists(self.azkfile_path):
+            logger.fatal("Path '" + proj_path + "' does not exist.")
+            logger.fatal("You need an Azkfile.js in your project root.")
+            exit(1)
+
+        # Exec azk2json
+        here_dir = os.path.dirname(os.path.abspath(__file__))
+        azkjs_p = here_dir + "/azk2json/azk2json.js"
+        logger.debug("Evaluating Azkfile.js...")
+        try:
+            outp = subprocess.check_output(["node", azkjs_p, self.azkfile_path]).decode()
+            data = json.loads(outp)
+        except Exception as ex:
+            logger.fatal("Unable to evaluate Azkfile.js.")
+            logger.fatal(ex)
+            exit(1)
+
+        logger.debug("Evaluated azkfile: " + json.dumps(outp))
 
     def full(self):
         # check the source

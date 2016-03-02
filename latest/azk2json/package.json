@@ -1,0 +1,14 @@
+{
+  "name": "azk2json",
+  "version": "1.0.0",
+  "description": "Converts Azkfile.js to json",
+  "main": "azk2json.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Christian Stewart (paralin) <christian@paral.in>",
+  "license": "ISC",
+  "dependencies": {
+    "validate.js": "^0.9.0"
+  }
+}
