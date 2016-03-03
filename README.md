@@ -5,7 +5,7 @@ Base docker image to deploy an app into Kubernetes using [`azk`](http://azk.io)
 
 Initial Considerations
 ---
-This is heavily experimental, but I plan to use this in production, so it *will* reach a stable state soon enough.
+This is heavily experimental. Not sure if I will complete it.
 
 Versions (tags)
 ---
